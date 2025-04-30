@@ -1,0 +1,7 @@
+import os
+
+class Config:
+ 
+    SIERRA_API_BASE_URL = "https://sierra.library.org/iii/sierra-api/v6/"
+    SIERRA_API_CLIENT_KEY = "CLIENT_KEY_HERE"
+    SIERRA_API_CLIENT_SECRET = "CLIENT_SECRET_HERE"

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Title Paging Reports</title></head>
+<body>
+  <h1>Available Title Paging Reports</h1>
+  <ul>
+    {% for report in reports %}
+      <li>
+        <a href="{{ url_for('report', report_id=report.id) }}">
+          Report ID {{ report.id }} — Created {{ report.createdDate }} — Total {{ report.total }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

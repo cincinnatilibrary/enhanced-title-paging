@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Title Paging Report {{ report_id }}</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2em;
+    }
+    h1 {
+      margin-bottom: 0.5em;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1em;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .small-text {
+      font-size: 0.9em;
+      color: #555;
+    }
+    select {
+      font-size: 1em;
+      padding: 0.3em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Title Paging Report #{{ report_id }} — Available Items</h1>
+
+  <!-- Location filter -->
+  <form method="get">
+    <label for="locationgroup">Filter by location:</label>
+    <select name="locationgroup" id="locationgroup" onchange="this.form.submit()">
+      <option value="">-- All Locations --</option>
+      {% for loc in locationgroups %}
+        <option value="{{ loc.id }}" {% if loc.id == locationgroup %}selected{% endif %}>
+          {{ loc.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+
+  {% if locationgroup %}
+    <p><strong>Filtered by Location:</strong>
+      {{ locationgroups | selectattr("id", "equalto", locationgroup) | map(attribute="name") | first }}
+    </p>
+  {% endif %}
+
+  <!-- Data table -->
+  <p id="loading-message" style="display:none;"><strong>Loading filtered results...</strong></p>
+
+  <table id="report-table">
+    <thead>
+      <tr>
+        <th>Record Type</th>
+        <th>Record ID</th>
+        <th>Pickup Location</th>
+        <th>Patron ID</th>
+        <th>Created Date</th>
+        <!-- <th>Deleted</th> -->
+        <th>Available Items</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in entries %}
+        <tr>
+          <td>{{ entry.id.recordType or '' }}</td>
+          <td>{{ entry.id.recordId or '' }}</td>
+          <td>{{ entry.pickup or '' }}</td>
+          <td>{{ entry.id.patronId or '' }}</td>
+          <td>{{ entry.id.createdDate or '' }}</td>
+          <!-- <td>{{ entry.deletedDate or 'No' }}</td> -->
+          <td>
+            {% if entry.availableItems %}
+              <ul class="small-text">
+                {% for item_id in entry.availableItems %}
+                  <li>{{ item_id }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span class="small-text">None</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p><a href="{{ url_for('reports') }}">list all reports available</a></p>
+
+  <script>
+    document.getElementById("locationgroup").addEventListener("change", function () {
+      const table = document.getElementById("report-table");
+      const loading = document.getElementById("loading-message");
+      if (table) table.style.display = "none";
+      if (loading) loading.style.display = "block";
+    });
+  </script>
+</body>
+</html>
